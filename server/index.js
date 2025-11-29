@@ -4,16 +4,31 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
-import { initDb, withDb } from './db.js';
+import connectToDatabase from './mongo.js';
+import { addSubscriber, addContact, saveChatLog, getChatHistory } from './db-utils.js';
 import fs from 'fs';
+import contactRouter from './routes/contact.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8080;
 const FRONTEND_BASE = (process.env.FRONTEND_BASE || 'http://localhost:5173').replace(/\/$/, '');
+
+// Enable CORS with specific options
+const corsOptions = {
+  origin: FRONTEND_BASE,
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+// Middleware
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 const SITE_LINKS = {
   services: `${FRONTEND_BASE}/#services`,
   products: `${FRONTEND_BASE}/#products`,
@@ -142,6 +157,9 @@ function retrieveContext(query, maxChars = 1800) {
 buildSiteDocs();
 console.log(`Indexed site docs: ${SITE_DOCS.length} chunks`);
 
+// Use contact routes
+app.use(contactRouter);
+
 // Health
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
@@ -191,16 +209,15 @@ app.post('/api/chat', async (req, res) => {
   const GEMINI_KEY = process.env.GEMINI_API_KEY || '';
   const GEMINI_MODEL = (process.env.GEMINI_MODEL || 'models/gemini-2.5-flash').trim();
   try {
-    // Best-effort: log chat to DB (non-fatal on failure)
+    // Log chat messages to MongoDB (non-fatal on failure)
     try {
-      await withDb(async (conn) => {
-        for (const m of messages) {
-          if (!m?.role || !m?.content) continue;
-          await conn.query('INSERT INTO chat_logs(role, content) VALUES(?,?)', [m.role, m.content]);
-        }
-      });
-    } catch (_) {
-      // ignore DB logging errors
+      for (const m of messages) {
+        if (!m?.role || !m?.content) continue;
+        await saveChatLog(m.role, m.content, req.sessionID);
+      }
+    } catch (error) {
+      console.error('Error saving chat log:', error);
+      // Continue execution even if logging fails
     }
 
     const userPrompt = messages.filter(m => m.role === 'user').map(m => m.content).join('\n');
@@ -232,13 +249,13 @@ app.post('/api/chat', async (req, res) => {
       console.error('Gemini API error', r.status, errBody.slice(0, 500));
       throw new Error(`gemini_error_${r.status}`);
     }
-    const data = await r.json();
+    await connectToDatabase();
     let reply = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
     // Intent-based fallback if model returns empty/too short
     const q = (userPrompt || '').toLowerCase();
     const short = !reply || reply.trim().length < 20 || /no reply/i.test(reply);
     if (short) {
-      const aboutServices = /service|implementation|consult|support|maintenance|migration|upgrade/.test(q);
+      // ... (rest of the code remains the same)
       const aboutProducts = /product|s\/4|successfactors|ariba|concur|analytics cloud|sac|btp/.test(q);
       const aboutContact = /contact|support|help|demo|quote|reach|email|phone|assistance/.test(q);
       const aboutCompany = /company|about us|who are you|invenia/.test(q);
@@ -259,11 +276,23 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-initDb()
-  .then(() => {
-    app.listen(PORT, () => console.log(`API listening on http://localhost:${PORT}`));
-  })
-  .catch((e) => {
-    console.error('DB init failed', e);
+// Start the server after database connection is established
+async function startServer() {
+  try {
+    // Connect to the database
+    console.log('Connecting to MongoDB...');
+    await connectToDatabase();
+    console.log('✅ Connected to MongoDB!');
+
+    // Start the server after the database connection is established
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
-  });
+  }
+}
+
+// Start the server
+startServer();

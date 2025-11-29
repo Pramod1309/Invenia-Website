@@ -9,6 +9,8 @@ import CookiePreferences from "./components/CookiePreferences";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import CookiePolicy from "./pages/CookiePolicy";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [route, setRoute] = useState<string>(window.location.hash || "#/");
@@ -49,6 +51,18 @@ function App() {
       <Chatbot />
       <CookieConsent onManage={() => setPrefsOpen(true)} onSave={setConsent} />
       <CookiePreferences open={prefsOpen} onClose={() => setPrefsOpen(false)} onSave={setConsent} />
+      <ToastContainer 
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }

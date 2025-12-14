@@ -17,11 +17,11 @@ const Footer = () => {
                 <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                   Invenia Techlabs
                 </div>
-                <div className="text-blue-300 text-sm">Transforming Business Through SAP Excellence</div>
+                <div className="text-blue-300 text-sm">Delivering and Transforming Business Through ERP Excellence</div>
               </div>
             </div>
             <p className="text-gray-300 leading-relaxed mb-6 max-w-md">
-              Leading SAP consultancy delivering innovative solutions across industries. 
+              Leading ERP consultancy delivering innovative solutions across industries. 
               We empower businesses with cutting-edge technology and strategic insights.
             </p>
             <div className="flex space-x-4">

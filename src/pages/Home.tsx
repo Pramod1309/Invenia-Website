@@ -95,15 +95,15 @@ const Home = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-8">
             <span className="bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent">
-              Transform Your Business
+              Delivering ERP Excellence. Transform Your Business
             </span>
             <br />
             <span className="text-white text-4xl md:text-5xl">
-              with SAP Excellence
+              with ERP Excellence
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-4xl mx-auto leading-relaxed">
-            Leading SAP consultancy delivering innovative solutions across industries. 
+            Leading ERP consultancy delivering innovative solutions across industries. 
             We empower your digital transformation journey with cutting-edge technology.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">

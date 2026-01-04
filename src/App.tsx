@@ -1,6 +1,7 @@
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
+import Solutions from "./pages/Solutions";
 import FloatingActionButton from "./components/FloatingActionButton";
 import Chatbot from "./components/Chatbot";
 import { useEffect, useState } from "react";
@@ -30,6 +31,8 @@ function App() {
 
   const renderRoute = () => {
     switch (route) {
+      case "#/solutions":
+        return <Solutions />;
       case "#/privacy":
         return <Privacy />;
       case "#/terms":

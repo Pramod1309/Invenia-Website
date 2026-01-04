@@ -97,25 +97,28 @@ const Navbar = () => {
                   <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-300 rounded-full"></div>
                 )}
               </button>
-              <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                <button 
-                  onClick={() => scrollToSection('solutions')}
-                  className="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50"
-                >
-                  ERP & Digital Core
-                </button>
-                <button 
-                  onClick={() => scrollToSection('solutions')}
-                  className="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50"
-                >
-                  Finance & Accounting
-                </button>
-                <button 
-                  onClick={() => scrollToSection('solutions')}
-                  className="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50"
-                >
-                  Supply Chain
-                </button>
+              <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all max-h-[80vh] overflow-y-auto">
+                {[
+                  "AI-Powered ERP",
+                  "ERP & Digital Core",
+                  "Finance & Accounting",
+                  "Supply Chain",
+                  "Human Capital",
+                  "Customer Experience",
+                  "Cloud Solutions",
+                  "Data & Analytics",
+                  "Security & Compliance",
+                  "Integration Platform",
+                  "Training & Enablement"
+                ].map((solution, index) => (
+                  <button 
+                    key={index}
+                    onClick={() => scrollToSection('solutions')}
+                    className="block w-full text-left px-4 py-3 text-gray-800 hover:bg-blue-50 border-b border-gray-100 last:border-0"
+                  >
+                    {solution}
+                  </button>
+                ))}
               </div>
             </div>
             

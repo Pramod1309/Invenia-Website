@@ -4,6 +4,11 @@ import { ArrowRight } from "lucide-react";
 const Solutions = () => {
   const solutions = [
     {
+      title: "AI-Powered ERP",
+      description: "Transform your business with intelligent automation and AI-driven insights for next-generation enterprise solutions.",
+      link: "#"
+    },
+    {
       title: "ERP & Digital Core",
       description: "Transform your business with our comprehensive ERP solutions that streamline operations and drive growth.",
       link: "#"

@@ -2,8 +2,8 @@ import  { Users, Award, Globe, Target } from "lucide-react";
 
 const Company = () => {
   const team = [
-    { name: "Rajesh Kumar", role: "CEO & Founder", experience: "20+ years SAP expertise" },
-    { name: "Priya Sharma", role: "CTO", experience: "15+ years technical leadership" },
+    { name: "Ravindra Digraskar", role: "CEO & Founder", experience: "25+ years SAP expertise" },
+    { name: "Pramod Jadhav", role: "IT Developer", experience: "2+ years technical leadership" },
     { name: "Amit Patel", role: "Head of Consulting", experience: "18+ years SAP consulting" },
     { name: "Sneha Gupta", role: "Head of Operations", experience: "12+ years operations" }
   ];

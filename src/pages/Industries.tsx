@@ -1,16 +1,53 @@
-import  { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-
 const Industries = () => {
   const industries = [
-    { name: "Manufacturing", desc: "Streamline production processes", icon: "🏭" },
-    { name: "Retail & E-commerce", desc: "Enhance customer experience", icon: "🛒" },
-    { name: "Healthcare", desc: "Improve patient care delivery", icon: "🏥" },
-    { name: "Banking & Finance", desc: "Digital banking solutions", icon: "🏦" },
-    { name: "Education", desc: "Modern learning platforms", icon: "🎓" },
-    { name: "Public Sector", desc: "Efficient government services", icon: "🏛️" },
-    { name: "Energy & Utilities", desc: "Smart energy management", icon: "⚡" },
-    { name: "Automotive", desc: "Connected vehicle solutions", icon: "🚗" }
+    { 
+      name: "Manufacturing", 
+      desc: "Streamline production processes", 
+      desc2: "Optimize supply chain operations",
+      icon: "🏭" 
+    },
+    { 
+      name: "Retail & E-commerce", 
+      desc: "Enhance customer experience", 
+      desc2: "Automate inventory management",
+      icon: "🛒" 
+    },
+    { 
+      name: "Healthcare", 
+      desc: "Improve patient care delivery", 
+      desc2: "Ensure regulatory compliance",
+      icon: "🏥" 
+    },
+    { 
+      name: "Banking & Finance", 
+      desc: "Digital banking solutions", 
+      desc2: "Secure transaction processing",
+      icon: "🏦" 
+    },
+    { 
+      name: "Education", 
+      desc: "Modern learning platforms", 
+      desc2: "Streamline administrative workflows",
+      icon: "🎓" 
+    },
+    { 
+      name: "Public Sector", 
+      desc: "Efficient government services", 
+      desc2: "Enhance citizen engagement",
+      icon: "🏛️" 
+    },
+    { 
+      name: "Energy & Utilities", 
+      desc: "Smart energy management", 
+      desc2: "Monitor resource consumption",
+      icon: "⚡" 
+    },
+    { 
+      name: "Automotive", 
+      desc: "Connected vehicle solutions", 
+      desc2: "Streamline manufacturing processes",
+      icon: "🚗" 
+    }
   ];
 
   return (
@@ -28,10 +65,8 @@ const Industries = () => {
             <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
               <div className="text-4xl mb-4">{industry.icon}</div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">{industry.name}</h3>
-              <p className="text-gray-600 mb-6">{industry.desc}</p>
-              <Link to="/contact" className="text-blue-600 font-medium flex items-center hover:text-blue-700">
-                Learn More <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              <p className="text-gray-600 mb-3">{industry.desc}</p>
+              <p className="text-gray-600 mb-6">{industry.desc2}</p>
             </div>
           ))}
         </div>
@@ -41,4 +76,3 @@ const Industries = () => {
 };
 
 export default Industries;
- 

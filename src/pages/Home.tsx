@@ -3,6 +3,7 @@ import { useState } from 'react';
 import AnimatedCounter from "../components/AnimatedCounter";
 import HoverCard from "../components/HoverCard";
 import ParallaxSection from "../components/ParallaxSection";
+import SolutionModal from "../components/SolutionModal";
 
 const Home = () => {
   const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:4000';
@@ -17,6 +18,8 @@ const Home = () => {
   const [contactRequirement, setContactRequirement] = useState('');
   const [contactMsg, setContactMsg] = useState<string | null>(null);
   const [contactLoading, setContactLoading] = useState(false);
+  
+  const [selectedSolution, setSelectedSolution] = useState<number | null>(null);
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
@@ -28,6 +31,218 @@ const Home = () => {
       });
     }
   };
+
+  const solutionContents = [
+    {
+      // 1. AI-Powered ERP
+      heading: "Intelligent AI Solutions Embedded Within Your ERP",
+      subheading: "AI-powered capabilities embedded directly into the ERP digital core help organizations move from reactive operations to predictive, data-driven decision-making. By combining real-time data with machine learning and automation, ERP AI solutions enhance efficiency, accuracy, and business outcomes across functions.",
+      highlights: [
+        "Predictive insights for finance, supply chain, and operations",
+        "Intelligent automation to reduce manual tasks and errors",
+        "Embedded analytics and machine learning within core ERP processes",
+        "Real-time decision support powered by trusted enterprise data",
+        "Scalable AI capabilities integrated securely into the digital core"
+      ],
+      keyFeatures: [
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "AI-Driven Analytics", description: "Advanced ML models for predictive insights" },
+        { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "Smart Automation", description: "Automate complex processes with RPA" },
+        { icon: <TrendingUp className="h-5 w-5 text-green-600" />, title: "Real-time Insights", description: "Live dashboards and predictive analytics" },
+        { icon: <Shield className="h-5 w-5 text-blue-600" />, title: "Secure Integration", description: "Enterprise-grade security and compliance" }
+      ],
+      image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 2. ERP & Digital Core
+      heading: "Modernize Your Enterprise with Digital Core Transformation",
+      subheading: "Transform your business operations with our comprehensive ERP digital core solutions that provide real-time insights, streamline processes, and enable digital transformation across all business functions.",
+      highlights: [
+        "Complete business transformation with SAP S/4HANA",
+        "Real-time processing and analytics",
+        "Cloud-native architecture for scalability",
+        "Seamless integration with existing systems",
+        "Enhanced user experience with modern interfaces"
+      ],
+      keyFeatures: [
+        { icon: <Rocket className="h-5 w-5 text-blue-600" />, title: "Digital Transformation", description: "Modernize legacy systems and processes" },
+        { icon: <Globe className="h-5 w-5 text-purple-600" />, title: "Global Operations", description: "Multi-currency and multi-language support" },
+        { icon: <Target className="h-5 w-5 text-red-600" />, title: "Process Optimization", description: "Streamline end-to-end business processes" },
+        { icon: <Sparkles className="h-5 w-5 text-amber-600" />, title: "Innovation Ready", description: "Future-proof architecture for new technologies" }
+      ],
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 3. Finance & Accounting
+      heading: "Intelligent Financial Management Solutions",
+      subheading: "Transform your financial operations with AI-powered accounting solutions that automate processes, ensure compliance, and provide real-time financial insights for strategic decision-making.",
+      highlights: [
+        "Automated financial reporting and compliance",
+        "Real-time cash flow management",
+        "AI-powered fraud detection and prevention",
+        "Integrated tax management system",
+        "Predictive financial analytics"
+      ],
+      keyFeatures: [
+        { icon: <TrendingUp className="h-5 w-5 text-green-600" />, title: "Financial Analytics", description: "Advanced reporting and forecasting tools" },
+        { icon: <Shield className="h-5 w-5 text-red-600" />, title: "Risk Management", description: "Compliance monitoring and risk assessment" },
+        { icon: <Zap className="h-5 w-5 text-blue-600" />, title: "Process Automation", description: "Automate routine accounting tasks" },
+        { icon: <Target className="h-5 w-5 text-purple-600" />, title: "Budget Control", description: "Real-time budget monitoring and alerts" }
+      ],
+      image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 4. Supply Chain
+      heading: "Next-Generation Supply Chain Optimization",
+      subheading: "Revolutionize your supply chain with AI-driven solutions that enhance visibility, optimize inventory, and predict demand with unprecedented accuracy.",
+      highlights: [
+        "End-to-end supply chain visibility",
+        "AI-powered demand forecasting",
+        "Automated inventory optimization",
+        "Real-time logistics tracking",
+        "Supplier performance analytics"
+      ],
+      keyFeatures: [
+        { icon: <Globe className="h-5 w-5 text-blue-600" />, title: "Global Logistics", description: "End-to-end supply chain management" },
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "Predictive Analytics", description: "AI-driven demand forecasting" },
+        { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "Inventory Optimization", description: "Smart inventory management system" },
+        { icon: <Target className="h-5 w-5 text-green-600" />, title: "Cost Reduction", description: "Optimize logistics and reduce costs" }
+      ],
+      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 5. Human Capital
+      heading: "Transformative Human Capital Management",
+      subheading: "Empower your workforce with comprehensive HR solutions that streamline talent management, enhance employee experience, and drive organizational success.",
+      highlights: [
+        "Complete talent lifecycle management",
+        "AI-powered recruitment and onboarding",
+        "Performance management and analytics",
+        "Learning and development platforms",
+        "Employee engagement tools"
+      ],
+      keyFeatures: [
+        { icon: <Users className="h-5 w-5 text-orange-600" />, title: "Talent Management", description: "End-to-end talent lifecycle solutions" },
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "AI Recruitment", description: "Smart candidate matching and screening" },
+        { icon: <TrendingUp className="h-5 w-5 text-green-600" />, title: "Performance Analytics", description: "Data-driven performance insights" },
+        { icon: <Award className="h-5 w-5 text-blue-600" />, title: "Employee Development", description: "Personalized learning paths" }
+      ],
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 6. Customer Experience
+      heading: "Exceptional Customer Experience Platform",
+      subheading: "Deliver personalized customer experiences with AI-driven CRM solutions that understand customer needs, predict behavior, and enable seamless engagement across all touchpoints.",
+      highlights: [
+        "360-degree customer view",
+        "AI-powered customer insights",
+        "Omni-channel engagement platform",
+        "Personalized marketing automation",
+        "Customer journey analytics"
+      ],
+      keyFeatures: [
+        { icon: <Star className="h-5 w-5 text-pink-600" />, title: "Customer Insights", description: "Deep analytics and customer profiling" },
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "Predictive Engagement", description: "AI-driven customer behavior prediction" },
+        { icon: <Globe className="h-5 w-5 text-blue-600" />, title: "Omni-channel", description: "Seamless cross-channel experience" },
+        { icon: <Target className="h-5 w-5 text-green-600" />, title: "Personalization", description: "Tailored experiences for each customer" }
+      ],
+      image: "https://images.unsplash.com/photo-1551836026-d5c2c0b4d4a3?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 7. Cloud Solutions
+      heading: "Secure and Scalable Cloud Infrastructure",
+      subheading: "Leverage the power of cloud computing with enterprise-grade solutions that provide scalability, security, and flexibility for your business applications.",
+      highlights: [
+        "Enterprise-grade cloud security",
+        "Scalable infrastructure on demand",
+        "Disaster recovery and backup",
+        "Cost optimization and management",
+        "Hybrid and multi-cloud support"
+      ],
+      keyFeatures: [
+        { icon: <Shield className="h-5 w-5 text-cyan-600" />, title: "Cloud Security", description: "Advanced security and compliance features" },
+        { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "Scalability", description: "Auto-scaling and load balancing" },
+        { icon: <Globe className="h-5 w-5 text-blue-600" />, title: "Global Reach", description: "Worldwide data center network" },
+        { icon: <Target className="h-5 w-5 text-green-600" />, title: "Cost Efficiency", description: "Optimized resource utilization" }
+      ],
+      image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 8. Data & Analytics
+      heading: "Advanced Data Analytics and Business Intelligence",
+      subheading: "Unlock the power of your data with comprehensive analytics solutions that provide actionable insights, predictive analytics, and real-time business intelligence.",
+      highlights: [
+        "Real-time data processing and analytics",
+        "Predictive and prescriptive analytics",
+        "Interactive dashboards and reporting",
+        "AI-powered data discovery",
+        "Data governance and quality management"
+      ],
+      keyFeatures: [
+        { icon: <Brain className="h-5 w-5 text-indigo-600" />, title: "Advanced Analytics", description: "ML-driven predictive modeling" },
+        { icon: <TrendingUp className="h-5 w-5 text-green-600" />, title: "Business Intelligence", description: "Interactive dashboards and reports" },
+        { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "Real-time Processing", description: "Live data streaming and analysis" },
+        { icon: <Shield className="h-5 w-5 text-blue-600" />, title: "Data Governance", description: "Compliance and data quality management" }
+      ],
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 9. Security & Compliance
+      heading: "Enterprise Security and Regulatory Compliance",
+      subheading: "Protect your business with comprehensive security solutions that ensure data protection, regulatory compliance, and risk management across your enterprise.",
+      highlights: [
+        "End-to-end security monitoring",
+        "Regulatory compliance management",
+        "Risk assessment and mitigation",
+        "Identity and access management",
+        "Data encryption and protection"
+      ],
+      keyFeatures: [
+        { icon: <Shield className="h-5 w-5 text-red-600" />, title: "Threat Protection", description: "Advanced threat detection and prevention" },
+        { icon: <Target className="h-5 w-5 text-blue-600" />, title: "Compliance", description: "Automated regulatory compliance" },
+        { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "Risk Management", description: "Comprehensive risk assessment tools" },
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "AI Security", description: "AI-driven security analytics" }
+      ],
+      image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 10. Integration Platform
+      heading: "Seamless Enterprise Integration Platform",
+      subheading: "Connect your business systems with a powerful integration platform that enables seamless data flow, process automation, and system interoperability.",
+      highlights: [
+        "API-first integration architecture",
+        "Real-time data synchronization",
+        "Legacy system modernization",
+        "Cloud and on-premise connectivity",
+        "Process automation and orchestration"
+      ],
+      keyFeatures: [
+        { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "API Management", description: "Comprehensive API lifecycle management" },
+        { icon: <Globe className="h-5 w-5 text-blue-600" />, title: "System Integration", description: "Connect disparate systems seamlessly" },
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "Process Automation", description: "Automate complex business workflows" },
+        { icon: <Target className="h-5 w-5 text-green-600" />, title: "Data Flow", description: "Real-time data synchronization" }
+      ],
+      image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      // 11. Training & Enablement
+      heading: "Comprehensive Training and User Enablement",
+      subheading: "Accelerate your digital transformation with role-based training programs, certification support, and user adoption strategies that ensure success.",
+      highlights: [
+        "Role-based training programs",
+        "Certification preparation and support",
+        "User adoption strategies",
+        "Knowledge management systems",
+        "Continuous learning platforms"
+      ],
+      keyFeatures: [
+        { icon: <Award className="h-5 w-5 text-teal-600" />, title: "Certification", description: "Industry-recognized certification programs" },
+        { icon: <Users className="h-5 w-5 text-orange-600" />, title: "Role Training", description: "Role-specific training modules" },
+        { icon: <Brain className="h-5 w-5 text-purple-600" />, title: "Learning Paths", description: "Personalized learning journeys" },
+        { icon: <Target className="h-5 w-5 text-green-600" />, title: "Adoption Support", description: "User adoption and change management" }
+      ],
+      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.1.0&auto=format&fit=crop&w=800&q=80"
+    }
+  ];
 
   const handleSubscribe = async () => {
     const email = newsletterEmail.trim();
@@ -78,6 +293,23 @@ const Home = () => {
     }
   };
 
+  const handleStartClick = () => {
+    scrollToSection('contact');
+  };
+
+  const solutionTitles = [
+    "AI-Powered ERP",
+    "ERP & Digital Core",
+    "Finance & Accounting",
+    "Supply Chain",
+    "Human Capital",
+    "Customer Experience",
+    "Cloud Solutions",
+    "Data & Analytics",
+    "Security & Compliance",
+    "Integration Platform",
+    "Training & Enablement"
+  ];
 
   return (
     <div className="min-h-screen">
@@ -190,6 +422,11 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { 
+                title: "AI-Powered ERP", 
+                desc: "Intelligent automation and AI-driven business insights",
+                icon: <Brain className="h-8 w-8 text-purple-600 mb-4" />
+              },
+              { 
                 title: "ERP & Digital Core", 
                 desc: "Complete business transformation with SAP S/4HANA",
                 icon: <Rocket className="h-8 w-8 text-blue-600 mb-4" />
@@ -246,7 +483,7 @@ const Home = () => {
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">{solution.title}</h3>
                   <p className="text-gray-600 mb-6">{solution.desc}</p>
                   <button 
-                    onClick={() => scrollToSection('contact')}
+                    onClick={() => setSelectedSolution(index)}
                     className="text-blue-600 font-medium flex items-center group"
                   >
                     Learn More <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -447,44 +684,39 @@ const Home = () => {
 
       {/* Industries Section */}
       <section id="industries" className="py-20 bg-gradient-to-r from-blue-50 to-cyan-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Industries We Serve</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Specialized SAP solutions tailored for your industry's unique challenges and requirements
-            </p>
-          </div>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <h2 className="text-4xl font-bold text-gray-900 mb-4">Industries We Serve</h2>
+      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        Specialized SAP solutions tailored for your industry's unique challenges and requirements
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { name: "Manufacturing", desc: "Streamline production processes", icon: "🏭" },
-              { name: "Retail & E-commerce", desc: "Enhance customer experience", icon: "🛒" },
-              { name: "Healthcare", desc: "Improve patient care delivery", icon: "🏥" },
-              { name: "Banking & Finance", desc: "Digital banking solutions", icon: "🏦" },
-              { name: "Education", desc: "Modern learning platforms", icon: "🎓" },
-              { name: "Public Sector", desc: "Efficient government services", icon: "🏛️" },
-              { name: "Energy & Utilities", desc: "Smart energy management", icon: "⚡" },
-              { name: "Automotive", desc: "Connected vehicle solutions", icon: "🚗" },
-              { name: "Pharmaceuticals", desc: "Regulatory-compliant operations", icon: "💊" },
-              { name: "Logistics", desc: "Network optimization and visibility", icon: "🚚" },
-              { name: "Telecommunications", desc: "Scalable OSS/BSS", icon: "📡" },
-              { name: "Media & Entertainment", desc: "Digital content platforms", icon: "🎬" }
-            ].map((industry, index) => (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 transform hover:-translate-y-1">
-                <div className="text-4xl mb-4">{industry.icon}</div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">{industry.name}</h3>
-                <p className="text-gray-600 mb-6">{industry.desc}</p>
-                <button 
-                  onClick={() => scrollToSection('contact')}
-                  className="text-blue-600 font-medium flex items-center hover:text-blue-700"
-                >
-                  Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[
+        { name: "Manufacturing", desc: "Streamline production processes", desc2: "Optimize supply chain operations", icon: "🏭" },
+        { name: "Retail & E-commerce", desc: "Enhance customer experience", desc2: "Automate inventory management", icon: "🛒" },
+        { name: "Healthcare", desc: "Improve patient care delivery", desc2: "Ensure regulatory compliance", icon: "🏥" },
+        { name: "Banking & Finance", desc: "Digital banking solutions", desc2: "Secure transaction processing", icon: "🏦" },
+        { name: "Education", desc: "Modern learning platforms", desc2: "Streamline administrative workflows", icon: "🎓" },
+        { name: "Public Sector", desc: "Efficient government services", desc2: "Enhance citizen engagement", icon: "🏛️" },
+        { name: "Energy & Utilities", desc: "Smart energy management", desc2: "Monitor resource consumption", icon: "⚡" },
+        { name: "Automotive", desc: "Connected vehicle solutions", desc2: "Streamline manufacturing processes", icon: "🚗" },
+        { name: "Pharmaceuticals", desc: "Regulatory-compliant operations", desc2: "Accelerate drug development", icon: "💊" },
+        { name: "Logistics", desc: "Network optimization and visibility", desc2: "Real-time shipment tracking", icon: "🚚" },
+        { name: "Telecommunications", desc: "Scalable OSS/BSS", desc2: "Improve network performance", icon: "📡" },
+        { name: "Media & Entertainment", desc: "Digital content platforms", desc2: "Personalize viewer experiences", icon: "🎬" }
+      ].map((industry, index) => (
+        <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 transform hover:-translate-y-1">
+          <div className="text-4xl mb-4">{industry.icon}</div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">{industry.name}</h3>
+          <p className="text-gray-600 mb-3">{industry.desc}</p>
+          <p className="text-gray-600 mb-6">{industry.desc2}</p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Resources Section */}
       <section id="resources" className="py-20 bg-white">
@@ -651,8 +883,8 @@ const Home = () => {
             <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">Leadership Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
-                { name: "Rajesh Kumar", role: "CEO & Founder", experience: "20+ years SAP expertise" },
-                { name: "Priya Sharma", role: "CTO", experience: "15+ years technical leadership" },
+                { name: "Ravindra Digraskar", role: "CEO & Founder", experience: "25+ years SAP expertise" },
+                { name: "Pramod Jadhav", role: "IT Developer", experience: "2+ years technical leadership" },
                 { name: "Amit Patel", role: "Head of Consulting", experience: "18+ years SAP consulting" },
                 { name: "Sneha Gupta", role: "Head of Operations", experience: "12+ years operations" }
               ].map((member, index) => (
@@ -1073,6 +1305,18 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Solution Modals */}
+      {solutionContents.map((content, index) => (
+        <SolutionModal
+          key={index}
+          isOpen={selectedSolution === index}
+          onClose={() => setSelectedSolution(null)}
+          title={solutionTitles[index]}
+          content={content}
+          onStartClick={handleStartClick}
+        />
+      ))}
     </div>
   );
 };

@@ -63,8 +63,7 @@ const Navbar = () => {
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
               />
               <div className="text-white">
-                <div className="text-xl font-bold">Invenia Techlabs</div>
-                <div className="text-xs opacity-90">SAP Excellence</div>
+                <div className="text-xl font-bold">Invenia Consulting Group</div>
               </div>
             </button>
           </div>

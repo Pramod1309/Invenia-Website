@@ -4,6 +4,7 @@ import AnimatedCounter from "../components/AnimatedCounter";
 import HoverCard from "../components/HoverCard";
 import ParallaxSection from "../components/ParallaxSection";
 import SolutionModal from "../components/SolutionModal";
+import InnovationItem from "../components/InnovationItem";
 
 const Home = () => {
   const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:4000';
@@ -20,6 +21,8 @@ const Home = () => {
   const [contactLoading, setContactLoading] = useState(false);
   
   const [selectedSolution, setSelectedSolution] = useState<number | null>(null);
+  const [selectedInnovation, setSelectedInnovation] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState('mumbai');
 
   // Smooth scroll to section
   const scrollToSection = (sectionId: string) => {
@@ -311,6 +314,126 @@ const Home = () => {
     "Training & Enablement"
   ];
 
+  const handleInnovationSelect = (id: number) => {
+  setSelectedInnovation(selectedInnovation === id ? null : id);
+};
+
+const renderInnovationContent = () => {
+  const innovations = [
+    {
+      id: 1,
+      icon: <TrendingUp className="h-12 w-12 text-blue-400" />,
+      title: "AI-Powered Analytics",
+      shortDesc: "Leveraging machine learning for predictive insights",
+      fullDesc: "Our AI-powered analytics platform transforms raw data into actionable intelligence. Using advanced machine learning algorithms, we provide predictive insights that drive automated decision-making. From forecasting market trends to optimizing supply chains, our solution delivers 40% more accurate predictions than traditional methods.",
+      features: [
+        "Predictive analytics with 95% accuracy",
+        "Automated anomaly detection",
+        "Real-time decision support",
+        "Natural language query processing",
+        "Custom ML model development"
+      ],
+      stat: "40% improvement in decision accuracy"
+    },
+    {
+      id: 2,
+      icon: <Shield className="h-12 w-12 text-green-400" />,
+      title: "Enterprise Security",
+      shortDesc: "Advanced security protocols",
+      fullDesc: "Enterprise-grade security infrastructure that protects your data at every level. Our multi-layered security approach combines AI-driven threat detection, zero-trust architecture, and real-time monitoring to ensure comprehensive protection. We maintain 99.99% uptime while blocking over 1 million threats monthly.",
+      features: [
+        "Zero-trust architecture implementation",
+        "Real-time threat intelligence",
+        "Automated compliance monitoring",
+        "End-to-end encryption",
+        "24/7 security operations center"
+      ],
+      stat: "99.99% threat detection accuracy"
+    },
+    {
+      id: 3,
+      icon: <Zap className="h-12 w-12 text-yellow-400" />,
+      title: "Real-time Processing",
+      shortDesc: "Lightning-fast data processing",
+      fullDesc: "In-memory computing capabilities that deliver sub-second response times for complex queries. Our real-time processing engine handles millions of transactions per second with nanosecond latency. Experience up to 100x faster processing compared to traditional disk-based systems.",
+      features: [
+        "Sub-second query response times",
+        "In-memory columnar storage",
+        "Parallel processing architecture",
+        "Real-time data streaming",
+        "Automated performance tuning"
+      ],
+      stat: "100x faster than traditional systems"
+    },
+    {
+      id: 4,
+      icon: <Target className="h-12 w-12 text-purple-400" />,
+      title: "Precision Implementation",
+      shortDesc: "Surgical precision in implementation",
+      fullDesc: "Our precision implementation methodology minimizes disruption while maximizing ROI. Using agile sprints and predictive planning, we deliver projects 30% faster with zero business disruption. Each implementation is backed by comprehensive testing and change management.",
+      features: [
+        "Zero-disruption implementation",
+        "Predictive project planning",
+        "Automated testing suite",
+        "Change management integration",
+        "Real-time progress tracking"
+      ],
+      stat: "30% faster implementation"
+    }
+  ];
+
+  const selected = innovations.find(item => item.id === selectedInnovation);
+
+  if (!selected) {
+    return (
+      <div className="text-center animate-fade-in">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full mb-6">
+          <Sparkles className="h-8 w-8 text-white" />
+        </div>
+        <h3 className="text-2xl font-bold mb-4">Select an Innovation</h3>
+        <p className="text-blue-100">
+          Click on any innovation category to explore detailed features and capabilities
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fade-in">
+      <div className="flex items-center space-x-4 mb-6">
+        <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
+          {selected.icon}
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold">{selected.title}</h3>
+          <p className="text-blue-100">{selected.shortDesc}</p>
+        </div>
+      </div>
+      
+      <p className="text-white mb-6">{selected.fullDesc}</p>
+      
+      <div className="mb-6">
+        <h4 className="text-lg font-semibold mb-3">Key Features:</h4>
+        <ul className="space-y-2">
+          {selected.features.map((feature, idx) => (
+            <li key={idx} className="flex items-center space-x-3">
+              <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+              <span className="text-blue-100">{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-xl p-4 border border-blue-500/30">
+        <div className="flex items-center space-x-3">
+          <TrendingUp className="h-6 w-6 text-green-400" />
+          <span className="text-white font-semibold">{selected.stat}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -357,21 +480,88 @@ const Home = () => {
 
       {/* Map Section after Contact */}
       <section className="bg-white py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Us on Google Maps</h2>
-          <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200">
-            <iframe
-              title="Invenia Techlabs Location"
-              src="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072&output=embed"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
-        </div>
-      </section>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Us on Google Maps</h2>
+    
+    {/* Add tabs */}
+    <div className="flex border-b border-gray-200 mb-6">
+      <button
+        className={`py-2 px-4 font-medium text-sm border-b-2 ${
+          activeTab === 'mumbai' 
+            ? 'border-blue-600 text-blue-600' 
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+        }`}
+        onClick={() => setActiveTab('mumbai')}
+      >
+        Mumbai, India
+      </button>
+      <button
+        className={`py-2 px-4 font-medium text-sm border-b-2 ${
+          activeTab === 'wiesbaden' 
+            ? 'border-blue-600 text-blue-600' 
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+        }`}
+        onClick={() => setActiveTab('wiesbaden')}
+      >
+        Wiesbaden, Germany
+      </button>
+    </div>
+    
+    <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+      {activeTab === 'mumbai' ? (
+        <iframe
+          title="Invenia Techlabs Mumbai Location"
+          src="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072&output=embed"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      ) : (
+        <iframe
+          title="Invenia Consulting GmbH Wiesbaden Location"
+          src="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany&output=embed"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        />
+      )}
+    </div>
+    
+    <div className="mt-4 text-sm text-gray-600">
+      {activeTab === 'mumbai' ? (
+        <>
+          <p className="font-medium">WeWork Lightbridge, 6th floor, Hiranandani Business Park</p>
+          <p>Saki Vihar Rd, Tunga Village, Chandivali, Powai, Maharashtra 400072, India</p>
+          <a
+            className="text-blue-600 hover:underline inline-flex items-center mt-2"
+            href="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <MapPin className="h-4 w-4 mr-1" /> Open in Google Maps
+          </a>
+        </>
+      ) : (
+        <>
+          <p className="font-medium">Invenia Consulting GmbH</p>
+          <p>Adolfstr. 1, 65185 Wiesbaden, Germany</p>
+          <a
+            className="text-blue-600 hover:underline inline-flex items-center mt-2"
+            href="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <MapPin className="h-4 w-4 mr-1" /> Open in Google Maps
+          </a>
+        </>
+      )}
+    </div>
+  </div>
+</section>
 
       {/* Stats Section */}
       <section className="py-20 bg-gradient-to-r from-blue-50 to-cyan-50">
@@ -1008,50 +1198,113 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Innovation Section */}
-      <section className="py-20 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">Innovation at Scale</h2>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              We're not just implementing SAP solutions, we're pioneering the future of enterprise technology.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: <TrendingUp className="h-12 w-12 text-blue-400" />,
-                title: "AI-Powered Analytics",
-                description: "Leveraging machine learning for predictive insights and automated decision making."
-              },
-              {
-                icon: <Shield className="h-12 w-12 text-green-400" />,
-                title: "Enterprise Security",
-                description: "Advanced security protocols ensuring your data is protected at every level."
-              },
-              {
-                icon: <Zap className="h-12 w-12 text-yellow-400" />,
-                title: "Real-time Processing",
-                description: "Lightning-fast data processing with in-memory computing capabilities."
-              },
-              {
-                icon: <Target className="h-12 w-12 text-purple-400" />,
-                title: "Precision Implementation",
-                description: "Surgical precision in every implementation, minimizing disruption to your business."
-              }
-            ].map((feature, index) => (
-              <div key={index} className="text-center">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 hover:bg-white/20 transition-all">
-                  <div className="flex justify-center mb-6">{feature.icon}</div>
-                  <h3 className="text-xl font-semibold text-white mb-4">{feature.title}</h3>
-                  <p className="text-blue-100">{feature.description}</p>
-                </div>
-              </div>
-            ))}
+      {/* Innovation Section - Animated Version */}
+<section className="py-20 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <h2 className="text-4xl font-bold text-white mb-4">Innovation at Scale</h2>
+      <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+        We're not just implementing SAP solutions, we're pioneering the future of enterprise technology.
+      </p>
+    </div>
+    
+    {/* Animated Innovation Circle */}
+    <div className="relative min-h-[600px] flex items-center justify-center">
+      {/* Central Pulse Animation */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="absolute w-64 h-64 bg-blue-500/10 rounded-full animate-ping-slow"></div>
+        <div className="absolute w-48 h-48 bg-cyan-500/10 rounded-full animate-pulse"></div>
+        <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center shadow-2xl">
+          <Sparkles className="h-12 w-12 text-white" />
+        </div>
+      </div>
+      
+      {/* Innovation Items Container */}
+      <div className="relative w-full h-full">
+        {[
+          {
+            id: 1,
+            icon: <TrendingUp className="h-12 w-12 text-blue-400" />,
+            title: "AI-Powered Analytics",
+            shortDesc: "Leveraging machine learning for predictive insights",
+            fullDesc: "Our AI-powered analytics platform transforms raw data into actionable intelligence. Using advanced machine learning algorithms, we provide predictive insights that drive automated decision-making. From forecasting market trends to optimizing supply chains, our solution delivers 40% more accurate predictions than traditional methods.",
+            features: [
+              "Predictive analytics with 95% accuracy",
+              "Automated anomaly detection",
+              "Real-time decision support",
+              "Natural language query processing",
+              "Custom ML model development"
+            ],
+            stat: "40% improvement in decision accuracy"
+          },
+          {
+            id: 2,
+            icon: <Shield className="h-12 w-12 text-green-400" />,
+            title: "Enterprise Security",
+            shortDesc: "Advanced security protocols",
+            fullDesc: "Enterprise-grade security infrastructure that protects your data at every level. Our multi-layered security approach combines AI-driven threat detection, zero-trust architecture, and real-time monitoring to ensure comprehensive protection. We maintain 99.99% uptime while blocking over 1 million threats monthly.",
+            features: [
+              "Zero-trust architecture implementation",
+              "Real-time threat intelligence",
+              "Automated compliance monitoring",
+              "End-to-end encryption",
+              "24/7 security operations center"
+            ],
+            stat: "99.99% threat detection accuracy"
+          },
+          {
+            id: 3,
+            icon: <Zap className="h-12 w-12 text-yellow-400" />,
+            title: "Real-time Processing",
+            shortDesc: "Lightning-fast data processing",
+            fullDesc: "In-memory computing capabilities that deliver sub-second response times for complex queries. Our real-time processing engine handles millions of transactions per second with nanosecond latency. Experience up to 100x faster processing compared to traditional disk-based systems.",
+            features: [
+              "Sub-second query response times",
+              "In-memory columnar storage",
+              "Parallel processing architecture",
+              "Real-time data streaming",
+              "Automated performance tuning"
+            ],
+            stat: "100x faster than traditional systems"
+          },
+          {
+            id: 4,
+            icon: <Target className="h-12 w-12 text-purple-400" />,
+            title: "Precision Implementation",
+            shortDesc: "Surgical precision in implementation",
+            fullDesc: "Our precision implementation methodology minimizes disruption while maximizing ROI. Using agile sprints and predictive planning, we deliver projects 30% faster with zero business disruption. Each implementation is backed by comprehensive testing and change management.",
+            features: [
+              "Zero-disruption implementation",
+              "Predictive project planning",
+              "Automated testing suite",
+              "Change management integration",
+              "Real-time progress tracking"
+            ],
+            stat: "30% faster implementation"
+          }
+        ].map((item, index) => (
+          <InnovationItem
+            key={item.id}
+            item={item}
+            index={index}
+            totalItems={4}
+            isSelected={selectedInnovation === item.id}
+            onSelect={() => handleInnovationSelect(item.id)}
+          />
+        ))}
+      </div>
+      
+      {/* Content Display Area */}
+      <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/2 pl-12">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 min-h-[400px] transition-all duration-500">
+          <div id="innovation-content" className="text-white">
+            {renderInnovationContent()}
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Video Section */}
       <section className="py-20 bg-white">

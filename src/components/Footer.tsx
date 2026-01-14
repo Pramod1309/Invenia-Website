@@ -56,20 +56,39 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-6 text-blue-300">Contact Info</h3>
             <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" />
-                <div className="text-gray-300">
-                  <div>WeWork Lightbridge, 6th floor, Hiranandani Business Park</div>
-                  <div>Saki Vihar Rd, Tunga Village, Chandivali, Powai</div>
-                  <div>Maharashtra 400072</div>
-                  <a
-                    href="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-blue-300 hover:underline block mt-1"
-                  >
-                    Open in Google Maps
-                  </a>
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <MapPin className="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" />
+                  <div className="text-gray-300">
+                    <div className="font-medium">Mumbai, India</div>
+                    <div>WeWork Lightbridge, 6th floor, Hiranandani Business Park</div>
+                    <div>Saki Vihar Rd, Tunga Village, Chandivali, Powai</div>
+                    <div>Maharashtra 400072</div>
+                    <a
+                      href="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-300 hover:underline inline-flex items-center mt-1 text-sm"
+                    >
+                      <MapPin className="h-3 w-3 mr-1" /> View on Map
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-3 pt-2 border-t border-slate-700">
+                  <MapPin className="h-5 w-5 text-blue-400 mt-1 flex-shrink-0" />
+                  <div className="text-gray-300">
+                    <div className="font-medium">Invenia Consulting GmbH</div>
+                    <div>Adolfstr. 1, 65185 Wiesbaden, Germany</div>
+                    <a
+                      href="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-300 hover:underline inline-flex items-center mt-1 text-sm"
+                    >
+                      <MapPin className="h-3 w-3 mr-1" /> View on Map
+                    </a>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center space-x-3">

@@ -8,6 +8,7 @@ import connectToDatabase from './mongo.js';
 import { addSubscriber, addContact, saveChatLog, getChatHistory } from './db-utils.js';
 import fs from 'fs';
 import contactRouter from './routes/contact.js';
+import subscribeRouter from './routes/subscribe.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,9 +18,26 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const FRONTEND_BASE = (process.env.FRONTEND_BASE || 'http://localhost:5173').replace(/\/$/, '');
 
+// Production domains for CORS
+const allowedOrigins = [
+  FRONTEND_BASE,
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://inveniaconsulting.com',
+  'https://www.inveniaconsulting.com'
+];
+
 // Enable CORS with specific options
 const corsOptions = {
-  origin: FRONTEND_BASE,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all origins in production for now
+    }
+  },
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -40,8 +58,6 @@ const SITE_LINKS = {
   support: `${FRONTEND_BASE}/#contact`
 };
 
-app.use(cors({ origin: '*'}));
-app.use(express.json());
 // Site context to guide Gemini responses
 const SITE_CONTEXT = `You are Invenia Techlabs' AI assistant for a corporate website built with React/Vite.\nCompany: Invenia Techlabs — SAP Excellence.\nOfferings:\n- Solutions: ERP & Digital Core (SAP S/4HANA), Finance & Accounting, Supply Chain, Human Capital, Customer Experience, Cloud Solutions, Data & Analytics, Security & Compliance.\n- Products: SAP S/4HANA, SAP SuccessFactors, SAP Ariba, SAP Concur, SAP Analytics Cloud, SAP BTP.\n- Services: SAP Consulting, SAP Implementation, Migration & Upgradation, Managed Support, Integration, Training & Enablement.\n- Industries: Manufacturing, Retail & E-commerce, Healthcare, Banking & Finance, Education, Public Sector, Energy & Utilities, Automotive.\n- Resources: Blogs, Whitepapers, Webinars, Guides, Newsletter.\nStyle: Be concise, friendly, and helpful. Provide actionable answers grounded in the above. Encourage contacting via the Contact section for demos and quotes.`;
 
@@ -157,8 +173,9 @@ function retrieveContext(query, maxChars = 1800) {
 buildSiteDocs();
 console.log(`Indexed site docs: ${SITE_DOCS.length} chunks`);
 
-// Use contact routes
+// Use MongoDB-based routes for contact and subscribe
 app.use(contactRouter);
+app.use(subscribeRouter);
 
 // Health
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
@@ -170,37 +187,6 @@ app.get('/api/ai-status', (_req, res) => {
     geminiKeyPresent: Boolean(process.env.GEMINI_API_KEY),
     indexedChunks: SITE_DOCS.length
   });
-});
-
-// Subscribe: save email
-app.post('/api/subscribe', async (req, res) => {
-  const { email } = req.body || {};
-  if (!email) return res.status(400).json({ error: 'email required' });
-  try {
-    await withDb(async (conn) => {
-      await conn.query('INSERT IGNORE INTO subscribers(email) VALUES(?)', [email]);
-    });
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: 'db_error' });
-  }
-});
-
-// Contact: save message
-app.post('/api/contact', async (req, res) => {
-  const { name, email, phone, message } = req.body || {};
-  if (!name || !email) return res.status(400).json({ error: 'name and email required' });
-  try {
-    await withDb(async (conn) => {
-      await conn.query(
-        'INSERT INTO contacts(name, email, phone, message) VALUES(?,?,?,?)',
-        [name, email, phone ?? null, message ?? null]
-      );
-    });
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: 'db_error' });
-  }
 });
 
 // Chat: proxy to Gemini (placeholder if no key)

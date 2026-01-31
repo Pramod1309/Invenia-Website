@@ -6,7 +6,7 @@ import ParallaxSection from "../components/ParallaxSection";
 import SolutionModal from "../components/SolutionModal";
 
 const Home = () => {
-  const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:4000';
+  const API_BASE = (import.meta as any).env?.VITE_API_BASE || '';
 
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterMsg, setNewsletterMsg] = useState<string | null>(null);

@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Contact = () => {
+  const API_BASE = (import.meta as any).env?.VITE_API_BASE || '';
   const [activeTab, setActiveTab] = useState('mumbai');
   const [formData, setFormData] = useState({
     name: '',
@@ -33,7 +34,7 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('http://localhost:4000/api/contact', {
+      const response = await fetch(`${API_BASE}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

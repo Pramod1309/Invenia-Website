@@ -180,6 +180,53 @@ app.use(subscribeRouter);
 // Health
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
+// Email test endpoint for debugging
+app.get('/api/test-email', async (_req, res) => {
+  const nodemailer = await import('nodemailer');
+  
+  const config = {
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    user: process.env.EMAIL_USER,
+    from: process.env.EMAIL_FROM,
+    admin: process.env.ADMIN_EMAIL,
+    passConfigured: !!process.env.EMAIL_PASS
+  };
+  
+  console.log('Email config:', config);
+  
+  try {
+    const transporter = nodemailer.default.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: parseInt(process.env.EMAIL_PORT) || 587,
+      secure: parseInt(process.env.EMAIL_PORT) === 465,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+    
+    // Verify connection
+    await transporter.verify();
+    
+    res.json({ 
+      ok: true, 
+      message: 'SMTP connection verified successfully',
+      config 
+    });
+  } catch (error) {
+    res.json({ 
+      ok: false, 
+      error: error.message,
+      code: error.code,
+      config 
+    });
+  }
+});
+
 // AI status: quick diagnostics
 app.get('/api/ai-status', (_req, res) => {
   res.json({

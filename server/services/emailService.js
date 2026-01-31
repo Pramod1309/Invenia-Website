@@ -2,15 +2,42 @@ import nodemailer from 'nodemailer';
 
 // Create transporter function to ensure env vars are loaded
 const createTransporter = () => {
+  console.log('Creating email transporter with config:', {
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    user: process.env.EMAIL_USER,
+    from: process.env.EMAIL_FROM,
+    passLength: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.length : 0
+  });
+
+  const port = parseInt(process.env.EMAIL_PORT) || 587;
+  
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,          
-    port: parseInt(process.env.EMAIL_PORT) || 465,          
-    secure: process.env.EMAIL_PORT == '465', // true if SSL (465), false if TLS (587)
+    port: port,          
+    secure: port === 465, // true for 465, false for other ports
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    tls: {
+      rejectUnauthorized: false // Allow self-signed certificates
+    },
+    debug: true, // Enable debug output
+    logger: true // Log to console
   });
+};
+
+// Verify transporter connection
+const verifyTransporter = async (transporter) => {
+  try {
+    await transporter.verify();
+    console.log('SMTP connection verified successfully');
+    return true;
+  } catch (error) {
+    console.error('SMTP verification failed:', error.message);
+    return false;
+  }
 };
 
 // =======================
@@ -19,8 +46,15 @@ const createTransporter = () => {
 export const sendWelcomeEmail = async (to, name) => {
   try {
     const transporter = createTransporter();
+    
+    // Verify connection first
+    const isVerified = await verifyTransporter(transporter);
+    if (!isVerified) {
+      console.error('Transporter verification failed, attempting to send anyway...');
+    }
+
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: `"Invenia Techlabs" <${process.env.EMAIL_FROM}>`,
       to,
       subject: "Welcome to Invenia Techlabs",
       html: `
@@ -38,11 +72,18 @@ export const sendWelcomeEmail = async (to, name) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Welcome email sent successfully to ${to}`);
+    console.log('Attempting to send welcome email to:', to);
+    const result = await transporter.sendMail(mailOptions);
+    console.log(`Welcome email sent successfully to ${to}`, result);
     return { success: true };
   } catch (error) {
-    console.error("Error sending welcome email:", error);
+    console.error("Error sending welcome email:", {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     return { success: false, error: error.message };
   }
 };
@@ -54,7 +95,7 @@ export const sendContactFormEmail = async (formData) => {
   try {
     const transporter = createTransporter();
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: `"Invenia Techlabs" <${process.env.EMAIL_FROM}>`,
       to: process.env.ADMIN_EMAIL,
       subject: `New Contact Form Submission from ${formData.name}`,
       html: `
@@ -64,7 +105,7 @@ export const sendContactFormEmail = async (formData) => {
           <p><strong>Email:</strong> ${formData.email}</p>
           <p><strong>Company:</strong> ${formData.company}</p>
           <p><strong>Requirement:</strong></p>
-          <p>${formData.requirement.replace(/\n/g, "<br>")}</p>
+          <p>${formData.requirement ? formData.requirement.replace(/\n/g, "<br>") : 'N/A'}</p>
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
           <p style="font-size: 12px; color: #6b7280;">
             This is an automated message from the Invenia Techlabs website.
@@ -73,11 +114,18 @@ export const sendContactFormEmail = async (formData) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Contact form email sent successfully to ${process.env.ADMIN_EMAIL}`);
+    console.log('Attempting to send contact form email to:', process.env.ADMIN_EMAIL);
+    const result = await transporter.sendMail(mailOptions);
+    console.log(`Contact form email sent successfully`, result);
     return { success: true };
   } catch (error) {
-    console.error("Error sending contact form email:", error);
+    console.error("Error sending contact form email:", {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     return { success: false, error: error.message };
   }
 };
@@ -89,7 +137,7 @@ export const sendSubscriptionEmail = async (email) => {
   try {
     const transporter = createTransporter();
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: `"Invenia Techlabs" <${process.env.EMAIL_FROM}>`,
       to: email,
       subject: "Welcome to Invenia Techlabs Newsletter!",
       html: `
@@ -113,11 +161,18 @@ export const sendSubscriptionEmail = async (email) => {
       `,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Subscription email sent successfully to ${email}`);
+    console.log('Attempting to send subscription email to:', email);
+    const result = await transporter.sendMail(mailOptions);
+    console.log(`Subscription email sent successfully to ${email}`, result);
     return { success: true };
   } catch (error) {
-    console.error("Error sending subscription email:", error);
+    console.error("Error sending subscription email:", {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     return { success: false, error: error.message };
   }
 };

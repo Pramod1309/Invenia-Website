@@ -1,5 +1,6 @@
 import express from 'express';
 import { addSubscriber } from '../db-utils.js';
+import { sendSubscriptionEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -41,6 +42,15 @@ router.post('/api/subscribe', express.json(), async (req, res) => {
         success: false, 
         message: result.message || 'Failed to subscribe. Please try again.' 
       });
+    }
+
+    // Send subscription confirmation email (non-blocking)
+    try {
+      await sendSubscriptionEmail(trimmedEmail);
+      console.log('Subscription confirmation email sent to:', trimmedEmail);
+    } catch (emailError) {
+      console.error('Email sending error (non-fatal):', emailError);
+      // Continue even if email sending fails
     }
 
     return res.status(200).json({ 

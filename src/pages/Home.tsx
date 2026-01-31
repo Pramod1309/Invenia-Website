@@ -1,10 +1,9 @@
-import { ArrowRight, Check, Star, Users, Globe, Play, Quote, TrendingUp, Shield, Zap, Target, Sparkles, Rocket, Brain, Mail, Phone, MapPin, Send, Award, Book, FileText, Calendar, Download } from "lucide-react";
+import { ArrowRight, Check, Star, Users, Globe, Play, Quote, TrendingUp, Shield, Zap, Target, Sparkles, Rocket, Brain, Mail, Phone, MapPin, Send, Award, Book, FileText, Calendar, Download, ChevronRight, CheckCircle } from "lucide-react";
 import { useState } from 'react';
 import AnimatedCounter from "../components/AnimatedCounter";
 import HoverCard from "../components/HoverCard";
 import ParallaxSection from "../components/ParallaxSection";
 import SolutionModal from "../components/SolutionModal";
-import InnovationItem from "../components/InnovationItem";
 
 const Home = () => {
   const API_BASE = (import.meta as any).env?.VITE_API_BASE || 'http://localhost:4000';
@@ -21,7 +20,8 @@ const Home = () => {
   const [contactLoading, setContactLoading] = useState(false);
   
   const [selectedSolution, setSelectedSolution] = useState<number | null>(null);
-  const [selectedInnovation, setSelectedInnovation] = useState<number | null>(null);
+  const [selectedInnovation, setSelectedInnovation] = useState<number>(1);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState('mumbai');
 
   // Smooth scroll to section
@@ -314,125 +314,116 @@ const Home = () => {
     "Training & Enablement"
   ];
 
-  const handleInnovationSelect = (id: number) => {
-  setSelectedInnovation(selectedInnovation === id ? null : id);
-};
-
-const renderInnovationContent = () => {
+  // Innovation Section Data and Functions
   const innovations = [
     {
       id: 1,
-      icon: <TrendingUp className="h-12 w-12 text-blue-400" />,
+      icon: <TrendingUp className="h-10 w-10" />,
       title: "AI-Powered Analytics",
-      shortDesc: "Leveraging machine learning for predictive insights",
-      fullDesc: "Our AI-powered analytics platform transforms raw data into actionable intelligence. Using advanced machine learning algorithms, we provide predictive insights that drive automated decision-making. From forecasting market trends to optimizing supply chains, our solution delivers 40% more accurate predictions than traditional methods.",
+      shortDesc: "Machine learning for predictive insights",
+      fullDesc: "Transform raw enterprise data into actionable intelligence using advanced machine learning models. Achieve faster, smarter, and more accurate decisions at scale with our AI-driven analytics platform.",
       features: [
         "Predictive analytics with 95% accuracy",
         "Automated anomaly detection",
         "Real-time decision support",
         "Natural language query processing",
-        "Custom ML model development"
+        "Custom ML model development",
       ],
-      stat: "40% improvement in decision accuracy"
+      stat: "40% improvement in decision accuracy",
+      color: "blue"
     },
     {
       id: 2,
-      icon: <Shield className="h-12 w-12 text-green-400" />,
+      icon: <Shield className="h-10 w-10" />,
       title: "Enterprise Security",
       shortDesc: "Advanced security protocols",
-      fullDesc: "Enterprise-grade security infrastructure that protects your data at every level. Our multi-layered security approach combines AI-driven threat detection, zero-trust architecture, and real-time monitoring to ensure comprehensive protection. We maintain 99.99% uptime while blocking over 1 million threats monthly.",
+      fullDesc: "Enterprise-grade security architecture combining AI-driven threat detection, zero-trust principles, and continuous compliance monitoring to protect critical business systems and data.",
       features: [
         "Zero-trust architecture implementation",
-        "Real-time threat intelligence",
+        "AI-driven threat detection",
         "Automated compliance monitoring",
         "End-to-end encryption",
-        "24/7 security operations center"
+        "24/7 security operations center",
       ],
-      stat: "99.99% threat detection accuracy"
+      stat: "99.99% threat detection accuracy",
+      color: "green"
     },
     {
       id: 3,
-      icon: <Zap className="h-12 w-12 text-yellow-400" />,
+      icon: <Zap className="h-10 w-10" />,
       title: "Real-time Processing",
       shortDesc: "Lightning-fast data processing",
-      fullDesc: "In-memory computing capabilities that deliver sub-second response times for complex queries. Our real-time processing engine handles millions of transactions per second with nanosecond latency. Experience up to 100x faster processing compared to traditional disk-based systems.",
+      fullDesc: "In-memory computing capabilities that deliver sub-second response times for complex queries. Handle millions of transactions per second with nanosecond latency.",
       features: [
         "Sub-second query response times",
         "In-memory columnar storage",
         "Parallel processing architecture",
         "Real-time data streaming",
-        "Automated performance tuning"
+        "Automated performance tuning",
       ],
-      stat: "100x faster than traditional systems"
+      stat: "100x faster than traditional systems",
+      color: "yellow"
     },
     {
       id: 4,
-      icon: <Target className="h-12 w-12 text-purple-400" />,
+      icon: <Target className="h-10 w-10" />,
       title: "Precision Implementation",
-      shortDesc: "Surgical precision in implementation",
-      fullDesc: "Our precision implementation methodology minimizes disruption while maximizing ROI. Using agile sprints and predictive planning, we deliver projects 30% faster with zero business disruption. Each implementation is backed by comprehensive testing and change management.",
+      shortDesc: "Surgical precision in execution",
+      fullDesc: "Our precision implementation methodology minimizes disruption while maximizing ROI. Using agile sprints and predictive planning, we deliver projects faster with zero business disruption.",
       features: [
         "Zero-disruption implementation",
         "Predictive project planning",
         "Automated testing suite",
         "Change management integration",
-        "Real-time progress tracking"
+        "Real-time progress tracking",
       ],
-      stat: "30% faster implementation"
-    }
+      stat: "30% faster implementation",
+      color: "purple"
+    },
   ];
 
-  const selected = innovations.find(item => item.id === selectedInnovation);
+  const colorClasses = {
+    blue: {
+      bg: "bg-gradient-to-br from-blue-500/10 to-cyan-500/10",
+      border: "border-blue-500/30",
+      iconBg: "bg-gradient-to-br from-blue-600 to-cyan-600",
+      statBg: "bg-blue-600/20",
+      text: "text-blue-400"
+    },
+    green: {
+      bg: "bg-gradient-to-br from-green-500/10 to-emerald-500/10",
+      border: "border-green-500/30",
+      iconBg: "bg-gradient-to-br from-green-600 to-emerald-600",
+      statBg: "bg-green-600/20",
+      text: "text-green-400"
+    },
+    yellow: {
+      bg: "bg-gradient-to-br from-yellow-500/10 to-amber-500/10",
+      border: "border-yellow-500/30",
+      iconBg: "bg-gradient-to-br from-yellow-600 to-amber-600",
+      statBg: "bg-yellow-600/20",
+      text: "text-yellow-400"
+    },
+    purple: {
+      bg: "bg-gradient-to-br from-purple-500/10 to-violet-500/10",
+      border: "border-purple-500/30",
+      iconBg: "bg-gradient-to-br from-purple-600 to-violet-600",
+      statBg: "bg-purple-600/20",
+      text: "text-purple-400"
+    },
+  };
 
-  if (!selected) {
-    return (
-      <div className="text-center animate-fade-in">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full mb-6">
-          <Sparkles className="h-8 w-8 text-white" />
-        </div>
-        <h3 className="text-2xl font-bold mb-4">Select an Innovation</h3>
-        <p className="text-blue-100">
-          Click on any innovation category to explore detailed features and capabilities
-        </p>
-      </div>
-    );
-  }
+  const active = innovations.find((i) => i.id === selectedInnovation);
+  const activeColor = active ? colorClasses[active.color as keyof typeof colorClasses] : colorClasses.blue;
 
-  return (
-    <div className="animate-fade-in">
-      <div className="flex items-center space-x-4 mb-6">
-        <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center">
-          {selected.icon}
-        </div>
-        <div>
-          <h3 className="text-2xl font-bold">{selected.title}</h3>
-          <p className="text-blue-100">{selected.shortDesc}</p>
-        </div>
-      </div>
-      
-      <p className="text-white mb-6">{selected.fullDesc}</p>
-      
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold mb-3">Key Features:</h4>
-        <ul className="space-y-2">
-          {selected.features.map((feature, idx) => (
-            <li key={idx} className="flex items-center space-x-3">
-              <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
-              <span className="text-blue-100">{feature}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      
-      <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-xl p-4 border border-blue-500/30">
-        <div className="flex items-center space-x-3">
-          <TrendingUp className="h-6 w-6 text-green-400" />
-          <span className="text-white font-semibold">{selected.stat}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
+  const handleInnovationSelect = (id: number) => {
+    if (id === selectedInnovation) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setSelectedInnovation(id);
+      setIsAnimating(false);
+    }, 300);
+  };
 
   return (
     <div className="min-h-screen">
@@ -480,88 +471,88 @@ const renderInnovationContent = () => {
 
       {/* Map Section after Contact */}
       <section className="bg-white py-10">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Us on Google Maps</h2>
-    
-    {/* Add tabs */}
-    <div className="flex border-b border-gray-200 mb-6">
-      <button
-        className={`py-2 px-4 font-medium text-sm border-b-2 ${
-          activeTab === 'mumbai' 
-            ? 'border-blue-600 text-blue-600' 
-            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-        }`}
-        onClick={() => setActiveTab('mumbai')}
-      >
-        Mumbai, India
-      </button>
-      <button
-        className={`py-2 px-4 font-medium text-sm border-b-2 ${
-          activeTab === 'wiesbaden' 
-            ? 'border-blue-600 text-blue-600' 
-            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-        }`}
-        onClick={() => setActiveTab('wiesbaden')}
-      >
-        Wiesbaden, Germany
-      </button>
-    </div>
-    
-    <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200">
-      {activeTab === 'mumbai' ? (
-        <iframe
-          title="Invenia Techlabs Mumbai Location"
-          src="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072&output=embed"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      ) : (
-        <iframe
-          title="Invenia Consulting GmbH Wiesbaden Location"
-          src="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany&output=embed"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      )}
-    </div>
-    
-    <div className="mt-4 text-sm text-gray-600">
-      {activeTab === 'mumbai' ? (
-        <>
-          <p className="font-medium">WeWork Lightbridge, 6th floor, Hiranandani Business Park</p>
-          <p>Saki Vihar Rd, Tunga Village, Chandivali, Powai, Maharashtra 400072, India</p>
-          <a
-            className="text-blue-600 hover:underline inline-flex items-center mt-2"
-            href="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <MapPin className="h-4 w-4 mr-1" /> Open in Google Maps
-          </a>
-        </>
-      ) : (
-        <>
-          <p className="font-medium">Invenia Consulting GmbH</p>
-          <p>Adolfstr. 1, 65185 Wiesbaden, Germany</p>
-          <a
-            className="text-blue-600 hover:underline inline-flex items-center mt-2"
-            href="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <MapPin className="h-4 w-4 mr-1" /> Open in Google Maps
-          </a>
-        </>
-      )}
-    </div>
-  </div>
-</section>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Us on Google Maps</h2>
+          
+          {/* Add tabs */}
+          <div className="flex border-b border-gray-200 mb-6">
+            <button
+              className={`py-2 px-4 font-medium text-sm border-b-2 ${
+                activeTab === 'mumbai' 
+                  ? 'border-blue-600 text-blue-600' 
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+              onClick={() => setActiveTab('mumbai')}
+            >
+              Mumbai, India
+            </button>
+            <button
+              className={`py-2 px-4 font-medium text-sm border-b-2 ${
+                activeTab === 'wiesbaden' 
+                  ? 'border-blue-600 text-blue-600' 
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+              onClick={() => setActiveTab('wiesbaden')}
+            >
+              Wiesbaden, Germany
+            </button>
+          </div>
+          
+          <div className="w-full h-[400px] rounded-xl overflow-hidden shadow-lg border border-gray-200">
+            {activeTab === 'mumbai' ? (
+              <iframe
+                title="Invenia Techlabs Mumbai Location"
+                src="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <iframe
+                title="Invenia Consulting GmbH Wiesbaden Location"
+                src="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            )}
+          </div>
+          
+          <div className="mt-4 text-sm text-gray-600">
+            {activeTab === 'mumbai' ? (
+              <>
+                <p className="font-medium">WeWork Lightbridge, 6th floor, Hiranandani Business Park</p>
+                <p>Saki Vihar Rd, Tunga Village, Chandivali, Powai, Maharashtra 400072, India</p>
+                <a
+                  className="text-blue-600 hover:underline inline-flex items-center mt-2"
+                  href="https://www.google.com/maps?q=WeWork%20Lightbridge%2C%206th%20floor%2C%20Hiranandani%20Business%20Park%2C%20Saki%20Vihar%20Rd%2C%20Tunga%20Village%2C%20Chandivali%2C%20Powai%2C%20Maharashtra%20400072"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <MapPin className="h-4 w-4 mr-1" /> Open in Google Maps
+                </a>
+              </>
+            ) : (
+              <>
+                <p className="font-medium">Invenia Consulting GmbH</p>
+                <p>Adolfstr. 1, 65185 Wiesbaden, Germany</p>
+                <a
+                  className="text-blue-600 hover:underline inline-flex items-center mt-2"
+                  href="https://www.google.com/maps?q=Adolfstr.%201%2C%2065185%20Wiesbaden%2C%20Germany"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <MapPin className="h-4 w-4 mr-1" /> Open in Google Maps
+                </a>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
 
       {/* Stats Section */}
       <section className="py-20 bg-gradient-to-r from-blue-50 to-cyan-50">
@@ -874,39 +865,39 @@ const renderInnovationContent = () => {
 
       {/* Industries Section */}
       <section id="industries" className="py-20 bg-gradient-to-r from-blue-50 to-cyan-50">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <h2 className="text-4xl font-bold text-gray-900 mb-4">Industries We Serve</h2>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-        Specialized SAP solutions tailored for your industry's unique challenges and requirements
-      </p>
-    </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Industries We Serve</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Specialized SAP solutions tailored for your industry's unique challenges and requirements
+            </p>
+          </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {[
-        { name: "Manufacturing", desc: "Streamline production processes", desc2: "Optimize supply chain operations", icon: "🏭" },
-        { name: "Retail & E-commerce", desc: "Enhance customer experience", desc2: "Automate inventory management", icon: "🛒" },
-        { name: "Healthcare", desc: "Improve patient care delivery", desc2: "Ensure regulatory compliance", icon: "🏥" },
-        { name: "Banking & Finance", desc: "Digital banking solutions", desc2: "Secure transaction processing", icon: "🏦" },
-        { name: "Education", desc: "Modern learning platforms", desc2: "Streamline administrative workflows", icon: "🎓" },
-        { name: "Public Sector", desc: "Efficient government services", desc2: "Enhance citizen engagement", icon: "🏛️" },
-        { name: "Energy & Utilities", desc: "Smart energy management", desc2: "Monitor resource consumption", icon: "⚡" },
-        { name: "Automotive", desc: "Connected vehicle solutions", desc2: "Streamline manufacturing processes", icon: "🚗" },
-        { name: "Pharmaceuticals", desc: "Regulatory-compliant operations", desc2: "Accelerate drug development", icon: "💊" },
-        { name: "Logistics", desc: "Network optimization and visibility", desc2: "Real-time shipment tracking", icon: "🚚" },
-        { name: "Telecommunications", desc: "Scalable OSS/BSS", desc2: "Improve network performance", icon: "📡" },
-        { name: "Media & Entertainment", desc: "Digital content platforms", desc2: "Personalize viewer experiences", icon: "🎬" }
-      ].map((industry, index) => (
-        <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 transform hover:-translate-y-1">
-          <div className="text-4xl mb-4">{industry.icon}</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">{industry.name}</h3>
-          <p className="text-gray-600 mb-3">{industry.desc}</p>
-          <p className="text-gray-600 mb-6">{industry.desc2}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { name: "Manufacturing", desc: "Streamline production processes", desc2: "Optimize supply chain operations", icon: "🏭" },
+              { name: "Retail & E-commerce", desc: "Enhance customer experience", desc2: "Automate inventory management", icon: "🛒" },
+              { name: "Healthcare", desc: "Improve patient care delivery", desc2: "Ensure regulatory compliance", icon: "🏥" },
+              { name: "Banking & Finance", desc: "Digital banking solutions", desc2: "Secure transaction processing", icon: "🏦" },
+              { name: "Education", desc: "Modern learning platforms", desc2: "Streamline administrative workflows", icon: "🎓" },
+              { name: "Public Sector", desc: "Efficient government services", desc2: "Enhance citizen engagement", icon: "🏛️" },
+              { name: "Energy & Utilities", desc: "Smart energy management", desc2: "Monitor resource consumption", icon: "⚡" },
+              { name: "Automotive", desc: "Connected vehicle solutions", desc2: "Streamline manufacturing processes", icon: "🚗" },
+              { name: "Pharmaceuticals", desc: "Regulatory-compliant operations", desc2: "Accelerate drug development", icon: "💊" },
+              { name: "Logistics", desc: "Network optimization and visibility", desc2: "Real-time shipment tracking", icon: "🚚" },
+              { name: "Telecommunications", desc: "Scalable OSS/BSS", desc2: "Improve network performance", icon: "📡" },
+              { name: "Media & Entertainment", desc: "Digital content platforms", desc2: "Personalize viewer experiences", icon: "🎬" }
+            ].map((industry, index) => (
+              <div key={index} className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all border border-gray-100 transform hover:-translate-y-1">
+                <div className="text-4xl mb-4">{industry.icon}</div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{industry.name}</h3>
+                <p className="text-gray-600 mb-3">{industry.desc}</p>
+                <p className="text-gray-600 mb-6">{industry.desc2}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* Resources Section */}
       <section id="resources" className="py-20 bg-white">
@@ -1198,113 +1189,206 @@ const renderInnovationContent = () => {
         </div>
       </section>
 
-      {/* Innovation Section - Animated Version */}
-<section className="py-20 bg-gradient-to-r from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <h2 className="text-4xl font-bold text-white mb-4">Innovation at Scale</h2>
-      <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-        We're not just implementing SAP solutions, we're pioneering the future of enterprise technology.
-      </p>
-    </div>
-    
-    {/* Animated Innovation Circle */}
-    <div className="relative min-h-[600px] flex items-center justify-center">
-      {/* Central Pulse Animation */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="absolute w-64 h-64 bg-blue-500/10 rounded-full animate-ping-slow"></div>
-        <div className="absolute w-48 h-48 bg-cyan-500/10 rounded-full animate-pulse"></div>
-        <div className="w-24 h-24 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full flex items-center justify-center shadow-2xl">
-          <Sparkles className="h-12 w-12 text-white" />
-        </div>
-      </div>
-      
-      {/* Innovation Items Container */}
-      <div className="relative w-full h-full">
-        {[
-          {
-            id: 1,
-            icon: <TrendingUp className="h-12 w-12 text-blue-400" />,
-            title: "AI-Powered Analytics",
-            shortDesc: "Leveraging machine learning for predictive insights",
-            fullDesc: "Our AI-powered analytics platform transforms raw data into actionable intelligence. Using advanced machine learning algorithms, we provide predictive insights that drive automated decision-making. From forecasting market trends to optimizing supply chains, our solution delivers 40% more accurate predictions than traditional methods.",
-            features: [
-              "Predictive analytics with 95% accuracy",
-              "Automated anomaly detection",
-              "Real-time decision support",
-              "Natural language query processing",
-              "Custom ML model development"
-            ],
-            stat: "40% improvement in decision accuracy"
-          },
-          {
-            id: 2,
-            icon: <Shield className="h-12 w-12 text-green-400" />,
-            title: "Enterprise Security",
-            shortDesc: "Advanced security protocols",
-            fullDesc: "Enterprise-grade security infrastructure that protects your data at every level. Our multi-layered security approach combines AI-driven threat detection, zero-trust architecture, and real-time monitoring to ensure comprehensive protection. We maintain 99.99% uptime while blocking over 1 million threats monthly.",
-            features: [
-              "Zero-trust architecture implementation",
-              "Real-time threat intelligence",
-              "Automated compliance monitoring",
-              "End-to-end encryption",
-              "24/7 security operations center"
-            ],
-            stat: "99.99% threat detection accuracy"
-          },
-          {
-            id: 3,
-            icon: <Zap className="h-12 w-12 text-yellow-400" />,
-            title: "Real-time Processing",
-            shortDesc: "Lightning-fast data processing",
-            fullDesc: "In-memory computing capabilities that deliver sub-second response times for complex queries. Our real-time processing engine handles millions of transactions per second with nanosecond latency. Experience up to 100x faster processing compared to traditional disk-based systems.",
-            features: [
-              "Sub-second query response times",
-              "In-memory columnar storage",
-              "Parallel processing architecture",
-              "Real-time data streaming",
-              "Automated performance tuning"
-            ],
-            stat: "100x faster than traditional systems"
-          },
-          {
-            id: 4,
-            icon: <Target className="h-12 w-12 text-purple-400" />,
-            title: "Precision Implementation",
-            shortDesc: "Surgical precision in implementation",
-            fullDesc: "Our precision implementation methodology minimizes disruption while maximizing ROI. Using agile sprints and predictive planning, we deliver projects 30% faster with zero business disruption. Each implementation is backed by comprehensive testing and change management.",
-            features: [
-              "Zero-disruption implementation",
-              "Predictive project planning",
-              "Automated testing suite",
-              "Change management integration",
-              "Real-time progress tracking"
-            ],
-            stat: "30% faster implementation"
-          }
-        ].map((item, index) => (
-          <InnovationItem
-            key={item.id}
-            item={item}
-            index={index}
-            totalItems={4}
-            isSelected={selectedInnovation === item.id}
-            onSelect={() => handleInnovationSelect(item.id)}
-          />
-        ))}
-      </div>
-      
-      {/* Content Display Area */}
-      <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/2 pl-12">
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 min-h-[400px] transition-all duration-500">
-          <div id="innovation-content" className="text-white">
-            {renderInnovationContent()}
+      {/* NEW Innovation Section - Clean Non-Overlapping Version */}
+      <section className="py-20 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* HEADER */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full mb-6 animate-float">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent">
+              Innovation at Scale
+            </h2>
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+              Pioneering the future of enterprise technology with cutting-edge solutions
+            </p>
+          </div>
+
+          {/* MAIN CONTENT - TWO COLUMNS */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            
+            {/* LEFT COLUMN - INNOVATION CARDS */}
+            <div className="space-y-6">
+              {innovations.map((item) => {
+                const itemColor = colorClasses[item.color as keyof typeof colorClasses];
+                const isActive = item.id === selectedInnovation;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleInnovationSelect(item.id)}
+                    className={`w-full text-left transition-all duration-500 ${
+                      isActive ? 'transform -translate-y-2' : 'hover:-translate-y-1'
+                    }`}
+                  >
+                    <div className={`
+                      relative overflow-hidden rounded-2xl p-6 border-2 backdrop-blur-sm
+                      ${isActive ? activeColor.bg + ' ' + activeColor.border + ' shadow-2xl' : 'bg-white/5 border-white/10'}
+                      transition-all duration-500
+                    `}>
+                      {/* Glow effect for active item */}
+                      {isActive && (
+                        <div className={`absolute -inset-1 ${activeColor.bg.replace('bg-', 'bg-').replace('/10', '/20')} blur-xl -z-10`} />
+                      )}
+                      
+                      <div className="flex items-center gap-4">
+                        <div className={`
+                          w-14 h-14 rounded-xl flex items-center justify-center transition-transform duration-500
+                          ${isActive ? activeColor.iconBg + ' scale-110' : itemColor.iconBg + ' opacity-80'}
+                        `}>
+                          <div className={isActive ? 'text-white' : itemColor.text}>
+                            {item.icon}
+                          </div>
+                        </div>
+                        
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className={`text-xl font-bold transition-colors duration-300 ${
+                              isActive ? 'text-white' : 'text-blue-100'
+                            }`}>
+                              {item.title}
+                            </h3>
+                            <ChevronRight className={`h-5 w-5 transition-all duration-300 ${
+                              isActive ? 'text-cyan-400 rotate-90' : 'text-blue-400'
+                            }`} />
+                          </div>
+                          <p className={`text-sm transition-colors duration-300 ${
+                            isActive ? 'text-cyan-200' : 'text-blue-300'
+                          }`}>
+                            {item.shortDesc}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Active indicator */}
+                      {isActive && (
+                        <div className="absolute top-4 right-4">
+                          <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse" />
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* RIGHT COLUMN - DETAILED CONTENT */}
+            <div className={`
+              relative rounded-3xl p-8 backdrop-blur-lg border transition-all duration-500
+              ${activeColor.bg} ${activeColor.border}
+              ${isAnimating ? 'opacity-50 scale-95' : 'opacity-100 scale-100'}
+            `}>
+              {/* Animated background pattern */}
+              <div className="absolute inset-0 overflow-hidden rounded-3xl -z-10">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-white/5 to-transparent rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-cyan-500/5 to-transparent rounded-full blur-3xl" />
+              </div>
+
+              {active && (
+                <div className="space-y-8">
+                  {/* Header */}
+                  <div className="flex items-center gap-4">
+                    <div className={`w-16 h-16 ${activeColor.iconBg} rounded-xl flex items-center justify-center animate-pulse-glow`}>
+                      <div className="text-white">
+                        {active.icon}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                        {active.title}
+                      </h3>
+                      <p className={`${activeColor.text} font-medium`}>
+                        {active.shortDesc}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-white">Overview</h4>
+                    <p className="text-blue-100 leading-relaxed">
+                      {active.fullDesc}
+                    </p>
+                  </div>
+
+                  {/* Features */}
+                  <div className="space-y-4">
+                    <h4 className="text-lg font-semibold text-white">Key Features</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {active.features.map((feature, idx) => (
+                        <div 
+                          key={idx}
+                          className="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-white/10 animate-fade-in"
+                          style={{ animationDelay: `${idx * 100}ms` }}
+                        >
+                          <CheckCircle className={`h-5 w-5 ${activeColor.text} flex-shrink-0 mt-0.5`} />
+                          <span className="text-blue-100 text-sm">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Stat Card */}
+                  <div className={`${activeColor.statBg} rounded-xl p-6 border ${activeColor.border}`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-lg font-semibold text-white mb-2">Performance Impact</h4>
+                        <p className="text-blue-100 text-sm">Average improvement across implementations</p>
+                      </div>
+                      <div className="text-right">
+                        <div className={`text-3xl font-bold ${activeColor.text} mb-1`}>
+                          {active.stat}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className={`h-5 w-5 ${activeColor.text}`} />
+                          <span className="text-sm text-blue-200">Verified Results</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Navigation dots */}
+                  <div className="flex justify-center gap-2 pt-4">
+                    {innovations.map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleInnovationSelect(item.id)}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          item.id === selectedInnovation 
+                            ? `${activeColor.bg.replace('bg-', 'bg-').replace('/10', '')} w-8` 
+                            : 'bg-white/20 hover:bg-white/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* STATS BAR */}
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { label: "Projects Delivered", value: "500+", color: "blue" },
+              { label: "Client Satisfaction", value: "98%", color: "green" },
+              { label: "Implementation Speed", value: "30% Faster", color: "yellow" },
+              { label: "System Uptime", value: "99.99%", color: "purple" },
+            ].map((stat, idx) => (
+              <div 
+                key={idx}
+                className="text-center p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className={`text-3xl font-bold mb-2 ${colorClasses[stat.color as keyof typeof colorClasses].text}`}>
+                  {stat.value}
+                </div>
+                <div className="text-blue-100 text-sm">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* Video Section */}
       <section className="py-20 bg-white">

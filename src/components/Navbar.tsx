@@ -57,7 +57,7 @@ const Navbar = () => {
               className="flex items-center space-x-3"
             >
               <img 
-                src="dist\assets\logo.png" 
+                src="/logo.png" 
                 alt="Invenia Logo" 
                 className="h-12 w-auto"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}

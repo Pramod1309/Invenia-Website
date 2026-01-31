@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="col-span-1 lg:col-span-2">
             <div className="flex items-center space-x-3 mb-6">
               <img 
-                src="dist\assets\logo.png" 
+                src="/logo.png" 
                 alt="Invenia Logo" 
                 className="h-16 w-auto"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}

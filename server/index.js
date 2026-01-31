@@ -18,33 +18,18 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const FRONTEND_BASE = (process.env.FRONTEND_BASE || 'http://localhost:5173').replace(/\/$/, '');
 
-// Production domains for CORS
-const allowedOrigins = [
-  FRONTEND_BASE,
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'https://inveniaconsulting.com',
-  'https://www.inveniaconsulting.com'
-];
+// Enable CORS for all origins (production-ready)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: false
+}));
 
-// Enable CORS with specific options
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(null, true); // Allow all origins in production for now
-    }
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
+// Handle preflight requests
+app.options('*', cors());
 
 // Middleware
-app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const SITE_LINKS = {
@@ -179,6 +164,22 @@ app.use(subscribeRouter);
 
 // Health
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+// Config check endpoint - shows which env vars are configured
+app.get('/api/config-check', (_req, res) => {
+  res.json({
+    email: {
+      host: process.env.EMAIL_HOST || 'NOT SET',
+      port: process.env.EMAIL_PORT || 'NOT SET',
+      user: process.env.EMAIL_USER || 'NOT SET',
+      from: process.env.EMAIL_FROM || 'NOT SET',
+      admin: process.env.ADMIN_EMAIL || 'NOT SET',
+      passConfigured: !!process.env.EMAIL_PASS
+    },
+    frontend: process.env.FRONTEND_BASE || 'NOT SET',
+    mongodb: process.env.MONGODB_URI ? 'CONFIGURED' : 'USING DEFAULT'
+  });
+});
 
 // Email test endpoint for debugging
 app.get('/api/test-email', async (_req, res) => {
